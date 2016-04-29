@@ -1,0 +1,85 @@
+drop table if exists TASK;
+drop table if exists USER;
+
+-- User Table
+
+CREATE TABLE `USER` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `NAME` varchar(200) NOT NULL,
+  `USER_NAME` varchar(25),
+  `PASSWORD` varchar(25),
+  `DOB` DATE,
+  `PROFILE_IMAGE_ID` INT DEFAULT 0,
+  `PROFILE_IMAGE_NAME` varchar(200),
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+CREATE TABLE `TASK` (
+	`ID` INT NOT NULL AUTO_INCREMENT,
+	`NAME` varchar(200) NOT NULL,
+	`STATUS` varchar(50) NOT NULL,
+	`PRIORITY` INT DEFAULT 0 NOT NULL,
+	`CREATED_USER_ID` INT NOT NULL,
+	`CREATED_DATE` DATE,
+	`ASSIGNEE_USER_ID` INT,
+	`COMPLETED_DATE` DATE,
+	`COMMENTS` varchar(2000),
+  	 PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+--/
+alter table TASK add constraint FK_TASK_CREATOR foreign key (CREATED_USER_ID) references USER(ID);
+--/
+alter table TASK add constraint FK_TASK_ASSIGNEE foreign key (ASSIGNEE_USER_ID) references USER(ID);
+
+
+
+INSERT INTO USER(NAME, USER_NAME, PASSWORD, DOB) VALUES('John Smith', 'johnsmith', 'password123', STR_TO_DATE('01,5,2000','%d,%m,%Y'));
+--/
+INSERT INTO USER(NAME, USER_NAME, PASSWORD, DOB) VALUES('Alice Dupont', 'aliced', 'password345', STR_TO_DATE('05,5,1977','%d,%m,%Y'));
+--/
+-- Task Table
+
+ INSERT INTO TASK (NAME, STATUS, PRIORITY, CREATED_USER_ID, CREATED_DATE, ASSIGNEE_USER_ID, COMPLETED_DATE, COMMENTS)
+ VALUES ('Project Planning','Closed',2,1,NOW(),2,STR_TO_DATE('04,5,2016','%d,%m,%Y'),'Well done!');
+ INSERT INTO TASK (NAME, STATUS, PRIORITY, CREATED_USER_ID, CREATED_DATE, ASSIGNEE_USER_ID, COMPLETED_DATE, COMMENTS)
+ VALUES ('Project Testing','Open',3,1,NOW(),2,null,'To be done');
+ INSERT INTO TASK (NAME, STATUS, PRIORITY, CREATED_USER_ID, CREATED_DATE, ASSIGNEE_USER_ID, COMPLETED_DATE, COMMENTS)
+ VALUES ('Project Delivery','Open',4,1,NOW(),2,null,'To be done');
+ 
+ 
+ DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `kendo`.`CREATE_TASK` $$
+CREATE PROCEDURE `kendo`.`CREATE_TASK` (
+IN v_name VARCHAR(200),
+IN v_status VARCHAR(50),
+IN v_priority INTEGER,
+IN v_createdUserId INTEGER, 
+IN v_createdDate DATE, 
+IN v_assignedUserId INTEGER, 
+IN v_comment VARCHAR(2000), 
+OUT v_newID INTEGER)
+BEGIN
+	INSERT INTO TASK(NAME, STATUS, PRIORITY, CREATED_USER_ID, CREATED_DATE, ASSIGNEE_USER_ID, COMMENTS) VALUES(v_name, v_status, v_priority, v_createdUserId, v_createdDate, v_assignedUserId, v_comment);
+
+	SET v_newID = last_insert_id();
+END $$
+
+DROP PROCEDURE IF EXISTS `kendo`.`UPDATE_TASK` $$
+CREATE PROCEDURE `kendo`.`UPDATE_TASK` (
+IN v_id INTEGER,
+IN v_name VARCHAR(200),
+IN v_status VARCHAR(50),
+IN v_priority INTEGER,
+IN v_assignedUserId INTEGER, 
+IN v_comment VARCHAR(2000))
+BEGIN
+	DECLARE v_completedDate DATE;
+		IF v_STATUS = 'Complete' THEN
+			SET v_completedDate = NOW();
+		END IF;
+	UPDATE TASK SET NAME = v_name, STATUS = v_STATUS, priority = v_priority, ASSIGNEE_USER_ID = v_assignedUserId, COMPLETED_DATE = v_completedDate, COMMENTS = v_comment WHERE id = v_id;
+END $$
+
+DELIMITER ;
