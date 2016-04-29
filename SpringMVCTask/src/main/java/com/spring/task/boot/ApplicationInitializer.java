@@ -12,12 +12,11 @@ import javax.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ContextLoaderListener;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import com.spring.task.config.SpringDBConfig;
-import com.spring.task.config.SpringWebConfig;
 
 public class ApplicationInitializer implements WebApplicationInitializer {
 
@@ -28,11 +27,10 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
 		logger.info("===== Application is starting up! ========");
 
-		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-        ctx.register(SpringWebConfig.class, SpringDBConfig.class);
-        ctx.setServletContext(servletContext);
+		WebApplicationContext ctx = getAnnotationContext();
+        servletContext.addListener(new ContextLoaderListener(ctx));
  
-        ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcher", new DispatcherServlet(ctx));
+        ServletRegistration.Dynamic servlet = servletContext.addServlet("appServlet", new DispatcherServlet(ctx));
  
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
@@ -42,7 +40,7 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
 		FilterRegistration.Dynamic filter = servletContext.addFilter("httpMethodFilter",
 				"org.springframework.web.filter.HiddenHttpMethodFilter");
-		filter.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST), true, "dispatcher");
+		filter.addMappingForServletNames(EnumSet.of(DispatcherType.REQUEST), true, "appServlet");
 		filter.setAsyncSupported(true);
 	}
 

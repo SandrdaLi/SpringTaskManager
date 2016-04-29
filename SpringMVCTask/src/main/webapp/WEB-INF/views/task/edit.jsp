@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ page session="false"%>
 <html>
 <head>
@@ -25,7 +26,7 @@
 	function completeTask(_id) {
 		if (confirm("Complete... Task = " + _id + " ??? ")) {
 			with (document.forms[0]) {
-				action="../" + _id + "/complete";
+				action = "../" + _id + "/complete";
 				submit();
 			}
 		}
@@ -50,29 +51,57 @@
 							placeholder="Task Name" />
 					</div>
 					<div class="form-group">
+						<label for="txtStatus">Status</label>
+						<form:input path="status" class="form-control" id="txtStatus"
+							placeholder="Status" />
+					</div>
+					<div class="form-group">
 						<label for="txtComments">Comments</label>
 						<form:textarea path="comments" class="form-control"
 							id="txtComments" placeholder="Comments" rows="5" cols="30" />
 					</div>
 					<div class="form-group">
 						<label for="selectCreatedBy">Created By</label>
-						<form:select path="createdBy" id="selectCreatedBy"
+						<form:select path="createdBy.id" id="selectCreatedBy"
 							class="form-control">
 							<form:option value="-1" label="----------- Select -----------"></form:option>
 							<form:options items="${users}" itemValue="id" itemLabel="name" />
 						</form:select>
+						<form:errors path="createdBy.id" cssClass="control-label" />
 					</div>
 					<div class="form-group">
-						<label for="selectAssignedTo">Assigned To</label>
-						<form:select path="assignee" id="selectAssignedTo"
+						<label for="txtCreatedById">Created By ID</label>
+						<form:input path="createdBy.id" class="form-control"
+							id="txtCreatedById" placeholder="Created By Id" />
+					</div>
+					<div class="form-group">
+						<label for="txtCreatedByName">Created By Name</label>
+						<form:input path="createdBy.name" class="form-control"
+							id="txtCreatedByName" placeholder="Created By Name" />
+					</div>
+					<div class="form-group">
+						<label for="selectAssignedTo" class="control-label">Assigned
+							To</label>
+						<form:select path="assignee.id" id="selectAssignedTo"
 							class="form-control">
 							<form:option value="-1" label="----------- Select -----------"></form:option>
 							<form:options items="${users}" itemValue="id" itemLabel="name" />
 						</form:select>
+						<form:errors path="assignee.id" cssClass="control-label" />
 					</div>
 					<div class="form-group">
-						<label for="selectAssignedTo">Priority</label>
-						<form:select path="priority" id="selectAssignedTo"
+						<label for="txtAssignedToId">Assigned To ID</label>
+						<form:input path="assignee.id" class="form-control"
+							id="txtAssignedToId" placeholder="Assigned To ID" />
+					</div>
+					<div class="form-group">
+						<label for="txtAssignedToName">Assigned To Name</label>
+						<form:input path="assignee.name" class="form-control"
+							id="txtAssignedToName" placeholder="Assigned To Name" />
+					</div>
+					<div class="form-group">
+						<label for="selectPriority">Priority</label>
+						<form:select path="priority" id="selectPriority"
 							class="form-control">
 							<form:options items="${priorities}" />
 						</form:select>

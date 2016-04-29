@@ -86,8 +86,8 @@ public class TaskController {
 	public String newTaskForm(Model model) {
 
 		model.addAttribute("task", new Task());
-		// model.addAttribute("priorities", priorities);
-		// model.addAttribute("users", userService.findAllUsers());
+//		 model.addAttribute("priorities", priorities);
+//		 model.addAttribute("users", userService.findAllUsers());
 		return "task/new";
 	}
 
@@ -122,15 +122,17 @@ public class TaskController {
 	@RequestMapping(path = "/tasks/{id}", method = RequestMethod.PUT)
 	public String saveTask(@ModelAttribute("task") @Valid Task task, BindingResult result, Model model) {
 
-		// task.setAssignee(userService.findById(task.getAssignee().getId()));
-		// task.setCreatedBy(userService.findById(task.getCreatedBy().getId()));
+		 task.setAssignee(userService.findById(task.getAssignee().getId()));
+		 task.setCreatedBy(userService.findById(task.getCreatedBy().getId()));
 
 		Task existingTask = taskService.findTaskById(task.getId());
 		existingTask.setAssignee(task.getAssignee());
 		existingTask.setName(task.getName());
+		existingTask.setStatus(task.getStatus());
 		existingTask.setPriority(task.getPriority());
 		existingTask.setComments(task.getComments());
-
+		
+		taskService.updateTask(task);
 		return "redirect:/tasks/" + task.getId();
 	}
 

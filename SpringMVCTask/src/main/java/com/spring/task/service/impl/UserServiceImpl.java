@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 //	@Qualifier(value = "UserNamedParameterJdbcDAO")
 //	@Qualifier("UserSimpleJdbcInsertDAO")
-	@Qualifier(value = "UserJdbcDAO")
+//	@Qualifier(value = "UserJdbcDAO")
 	private UserDAO userDAO;
 
 	public UserServiceImpl() {

@@ -37,4 +37,10 @@ public interface TaskDAO {
 
 	void updateTask(Task task);
 
+	void addFile(Long taskId, String fileName);
+
+	void deleteFile(Long taskId, Long fileId);
+
+	void deleteAllFiles(Long taskId);
+
 }

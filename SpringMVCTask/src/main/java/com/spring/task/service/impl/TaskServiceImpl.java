@@ -158,4 +158,8 @@ public class TaskServiceImpl implements TaskService {
 		taskDAO.deleteTask(taskDAO.findById(taskId));
 	}
 
+	@Override
+	public void updateTask(Task task) {
+		taskDAO.updateTask(task);
+	}
 }
