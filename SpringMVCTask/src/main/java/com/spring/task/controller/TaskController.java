@@ -56,7 +56,7 @@ public class TaskController {
 		} else if (status.equals("Open"))
 			model.addAttribute("tasks", taskService.findAllOpenTasks());
 		else if (status.equals("Closed"))
-			model.addAttribute("tasks", taskService.findAllCompletedTasksCount());
+			model.addAttribute("tasks", taskService.findAllCompletedTasks());
 		else
 			throw new IllegalArgumentException(
 					"Illegal value for status supplied: " + status + "; Only 'Open' and 'Closed' are supported.");
@@ -86,8 +86,8 @@ public class TaskController {
 	public String newTaskForm(Model model) {
 
 		model.addAttribute("task", new Task());
-//		 model.addAttribute("priorities", priorities);
-//		 model.addAttribute("users", userService.findAllUsers());
+		// model.addAttribute("priorities", priorities);
+		// model.addAttribute("users", userService.findAllUsers());
 		return "task/new";
 	}
 
@@ -122,8 +122,8 @@ public class TaskController {
 	@RequestMapping(path = "/tasks/{id}", method = RequestMethod.PUT)
 	public String saveTask(@ModelAttribute("task") @Valid Task task, BindingResult result, Model model) {
 
-		 task.setAssignee(userService.findById(task.getAssignee().getId()));
-		 task.setCreatedBy(userService.findById(task.getCreatedBy().getId()));
+		// task.setAssignee(userService.findById(task.getAssignee().getId()));
+		// task.setCreatedBy(userService.findById(task.getCreatedBy().getId()));
 
 		Task existingTask = taskService.findTaskById(task.getId());
 		existingTask.setAssignee(task.getAssignee());
@@ -155,6 +155,8 @@ public class TaskController {
 		existingTask.setComments(task.getComments());
 		existingTask.setStatus("Closed");
 		existingTask.setCompletedDate(new Date());
+		
+		taskService.completeTask(task.getId(),task.getComments(),task.getAssignee().getId());
 
 		return "redirect:/tasks/" + id;
 	}

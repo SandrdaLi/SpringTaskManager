@@ -62,22 +62,8 @@
 					</div>
 					<div class="form-group">
 						<label for="selectCreatedBy">Created By</label>
-						<form:select path="createdBy.id" id="selectCreatedBy"
-							class="form-control">
-							<form:option value="-1" label="----------- Select -----------"></form:option>
-							<form:options items="${users}" itemValue="id" itemLabel="name" />
-						</form:select>
-						<form:errors path="createdBy.id" cssClass="control-label" />
-					</div>
-					<div class="form-group">
-						<label for="txtCreatedById">Created By ID</label>
-						<form:input path="createdBy.id" class="form-control"
-							id="txtCreatedById" placeholder="Created By Id" />
-					</div>
-					<div class="form-group">
-						<label for="txtCreatedByName">Created By Name</label>
-						<form:input path="createdBy.name" class="form-control"
-							id="txtCreatedByName" placeholder="Created By Name" />
+						<form:input path="createdBy.name" class="form-control" disabled="true"
+							id="txtCreatedByName"/>
 					</div>
 					<div class="form-group">
 						<label for="selectAssignedTo" class="control-label">Assigned
@@ -88,16 +74,6 @@
 							<form:options items="${users}" itemValue="id" itemLabel="name" />
 						</form:select>
 						<form:errors path="assignee.id" cssClass="control-label" />
-					</div>
-					<div class="form-group">
-						<label for="txtAssignedToId">Assigned To ID</label>
-						<form:input path="assignee.id" class="form-control"
-							id="txtAssignedToId" placeholder="Assigned To ID" />
-					</div>
-					<div class="form-group">
-						<label for="txtAssignedToName">Assigned To Name</label>
-						<form:input path="assignee.name" class="form-control"
-							id="txtAssignedToName" placeholder="Assigned To Name" />
 					</div>
 					<div class="form-group">
 						<label for="selectPriority">Priority</label>

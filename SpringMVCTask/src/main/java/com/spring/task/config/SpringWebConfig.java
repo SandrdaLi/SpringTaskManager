@@ -19,11 +19,6 @@ import com.spring.task.web.formatter.UserFormatter;
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
 	@Override
-	public void addFormatters(FormatterRegistry registry) {
-		registry.addFormatter(new UserFormatter());
-	}
-	
-	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 	}
@@ -39,9 +34,20 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public ResourceBundleMessageSource messageSource() {
-		ResourceBundleMessageSource source = new ResourceBundleMessageSource();
-		source.setBasename("validation-errors");
-		source.setDefaultEncoding("UTF-8");
-		return source;
+		ResourceBundleMessageSource rb = new ResourceBundleMessageSource();
+		rb.setBasenames(new String[] { "validation-errors" });
+		rb.setDefaultEncoding("UTF-8");
+		return rb;
 	}
+
+	@Override
+	public void addFormatters(FormatterRegistry formatterRegistry) {
+		formatterRegistry.addFormatter(getUserFormatter());
+	}
+
+	@Bean
+	public UserFormatter getUserFormatter() {
+		return new UserFormatter();
+	}
+
 }

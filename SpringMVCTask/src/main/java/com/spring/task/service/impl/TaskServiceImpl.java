@@ -136,7 +136,7 @@ public class TaskServiceImpl implements TaskService {
 		if (task.getAssignee().getId() != user) {
 			throw new UnsupportedOperationException("This task is not assigned to this user");
 		}
-		task.setStatus("Complete");
+		task.setStatus("Closed");
 		task.setCompletedDate(new Date());
 		task.setComments(comments);
 

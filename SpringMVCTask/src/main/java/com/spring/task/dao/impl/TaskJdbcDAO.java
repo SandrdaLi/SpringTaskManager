@@ -25,7 +25,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.jdbc.object.MappingSqlQuery;
 import org.springframework.stereotype.Repository;
 
-import com.spring.task.boot.ApplicationInitializer;
+import com.spring.task.config.SpringDBConfig;
 import com.spring.task.dao.TaskDAO;
 import com.spring.task.dao.UserDAO;
 import com.spring.task.domain.Task;
@@ -33,9 +33,8 @@ import com.spring.task.domain.User;
 
 @Repository("TaskJdbcDAO")
 public class TaskJdbcDAO implements TaskDAO {
+	private static final Logger logger = LoggerFactory.getLogger(TaskJdbcDAO.class);
 
-	private static final Logger logger = LoggerFactory.getLogger(ApplicationInitializer.class);
-	
 	private JdbcTemplate jdbcTemplate;
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private RowMapper<Task> taskRowMapper;
@@ -55,8 +54,8 @@ public class TaskJdbcDAO implements TaskDAO {
 		this.createTaskStoredProc = new SimpleJdbcCall(dataSource).withProcedureName("CREATE_TASK").declareParameters(
 				new SqlOutParameter("v_newID", Types.INTEGER), new SqlParameter("v_name", Types.VARCHAR),
 				new SqlParameter("v_STATUS", Types.VARCHAR), new SqlParameter("v_priority", Types.INTEGER),
-				new SqlParameter("v_createdUserId", Types.INTEGER), new SqlParameter("v_createdDate", Types.DATE),
-				new SqlParameter("v_assignedUserId", Types.INTEGER), new SqlParameter("v_comment", Types.VARCHAR));
+				new SqlParameter("v_createdUserId", Types.INTEGER), new SqlParameter("v_assignedUserId", Types.INTEGER),
+				new SqlParameter("v_comment", Types.VARCHAR));
 		this.updateTaskStoredProc = new SimpleJdbcCall(dataSource).withProcedureName("UPDATE_TASK").declareParameters(
 				new SqlParameter("v_id", Types.INTEGER), new SqlParameter("v_name", Types.VARCHAR),
 				new SqlParameter("v_STATUS", Types.VARCHAR), new SqlParameter("v_priority", Types.INTEGER),
@@ -209,17 +208,14 @@ public class TaskJdbcDAO implements TaskDAO {
 		return total;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> findOpenTasksByAssignee(Long assigneeId) {
-
-		SimpleJdbcCall procCall = new SimpleJdbcCall(jdbcTemplate.getDataSource())
-				.withProcedureName("GET_TASKS_BY_STATUS_ASSIGNEE_ID").returningResultSet("RESULT", taskRowMapper);
-
 		SqlParameterSource inParams = new MapSqlParameterSource().addValue("v_status", "Open").addValue("v_assignee_id",
 				assigneeId);
 
-		Map<String, Object> out = procCall.execute(inParams);
-		return (List<Task>) out.get("RESULT");
+		Map<String, Object> out = this.openTasksByAssigneeIdStoreProc.execute(inParams);
+		return (List<Task>) out.get("tasks");
 	}
 
 	@Override
@@ -228,16 +224,14 @@ public class TaskJdbcDAO implements TaskDAO {
 		return findOpenTasksByAssignee(assignee.getId());
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> findCompletedTasksByAssignee(Long assigneeId) {
-		SimpleJdbcCall procCall = new SimpleJdbcCall(jdbcTemplate.getDataSource())
-				.withProcedureName("GET_TASKS_BY_STATUS_ASSIGNEE_ID").returningResultSet("RESULT", taskRowMapper);
-
 		SqlParameterSource inParams = new MapSqlParameterSource().addValue("v_status", "Closed").addValue("v_assignee_id",
 				assigneeId);
 
-		Map<String, Object> out = procCall.execute(inParams);
-		return (List<Task>) out.get("RESULT");
+		Map<String, Object> out = this.openTasksByAssigneeIdStoreProc.execute(inParams);
+		return (List<Task>) out.get("tasks");
 	}
 
 	@Override

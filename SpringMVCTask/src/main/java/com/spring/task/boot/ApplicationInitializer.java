@@ -12,7 +12,6 @@ import javax.servlet.ServletRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -27,13 +26,12 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
 		logger.info("===== Application is starting up! ========");
 
-		WebApplicationContext ctx = getAnnotationContext();
-        servletContext.addListener(new ContextLoaderListener(ctx));
- 
-        ServletRegistration.Dynamic servlet = servletContext.addServlet("appServlet", new DispatcherServlet(ctx));
- 
-        servlet.setLoadOnStartup(1);
-        servlet.addMapping("/");
+		WebApplicationContext appContext = getAnnotationContext();
+		servletContext.addListener(org.springframework.web.context.ContextLoaderListener.class);
+		ServletRegistration.Dynamic servlet = servletContext.addServlet("appServlet",
+				new DispatcherServlet(appContext));
+		servlet.setLoadOnStartup(1);
+		servlet.addMapping("/");
 		servlet.setAsyncSupported(true);
 
 		servlet.setMultipartConfig(new MultipartConfigElement("/tmp/servlet-uploads", 20848820, 418018841, 1048576));
